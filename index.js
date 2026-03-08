@@ -68,7 +68,10 @@ app.get('/api/groups', async (req, res) => {
         const groups = chats.filter(chat => chat.isGroup);
         const groupData = groups.map(g => ({ id: g.id._serialized, name: g.name }));
         res.json(groupData);
-    } catch (error) { res.status(500).json({ error: 'Server error' }); }
+    } catch (error) { 
+        console.error('Group fetch error:', error);
+        res.status(500).json({ error: 'Server error: ' + error.message }); 
+    }
 });
 
 app.get('/api/schedules', (req, res) => {
@@ -118,3 +121,7 @@ client.initialize();
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`API Server ${PORT}-la run aagudhu! 🚀`));
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`API Server ${PORT}-la run aagudhu! 🚀`));
+
