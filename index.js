@@ -21,24 +21,43 @@ const upload = multer({ storage: storage });
 
 let scheduleHistory = [];
 let connectionStatus = 'Disconnected';
+let currentQR = ''; 
 
 const client = new Client({
     authStrategy: new LocalAuth(),
     puppeteer: { headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] }
 });
 
-// 🔥 PUDHU TRICK: TEXT QR-KU BADHILA IMAGE LINK VARUM 🔥
 client.on('qr', (qr) => {
-    console.log('=========================================');
-    console.log('👇👇👇 KEEZHA IRUKKURA LINK-AH CLICK PANNI QR CODE-AH SCAN PANNUNGA 👇👇👇');
-    const qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=' + encodeURIComponent(qr);
-    console.log(qrUrl);
-    console.log('=========================================');
+    currentQR = qr; 
+    console.log('✅ PUDHU QR VANDHUDUCHU! Browser-la /qr page-ah open panni scan pannunga.');
 });
 
 client.on('ready', () => {
     connectionStatus = 'Connected';
+    currentQR = ''; 
     console.log('Mass! WhatsApp pakka-va connect aaiduchu.');
+});
+
+// 🔥 PUDHU PERMANENT SOLUTION: WEB PAGE-LA QR CODE 🔥
+app.get('/qr', (req, res) => {
+    if (connectionStatus === 'Connected') {
+        res.send('<h2 style="color:green; text-align:center; font-family:sans-serif; margin-top:50px;">WhatsApp is Connected! 🎉 Namma Bot Ready!</h2>');
+    } else if (currentQR) {
+        res.send(`
+            <html lang="en">
+            <body style="display:flex; justify-content:center; align-items:center; height:100vh; background-color:#111; color:white; font-family:sans-serif; flex-direction:column;">
+                <h2>Scan this QR Code with WhatsApp</h2>
+                <div style="background:white; padding:20px; border-radius:10px; margin: 20px;">
+                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=350x350&data=${encodeURIComponent(currentQR)}" alt="QR Code"/>
+                </div>
+                <p style="color:#aaa;">(QR Code expire aayiduchu na, indha page-ah oru thadava refresh pannunga)</p>
+            </body>
+            </html>
+        `);
+    } else {
+        res.send('<h2 style="color:yellow; text-align:center; font-family:sans-serif; margin-top:50px;">Generating QR Code... Oru 10 second wait panni Refresh pannunga ⏳</h2>');
+    }
 });
 
 app.get('/api/status', (req, res) => res.json({ status: connectionStatus }));
