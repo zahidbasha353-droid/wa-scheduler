@@ -27,10 +27,13 @@ const client = new Client({
     puppeteer: { headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] }
 });
 
-// 🔥 PUDHU QR CODE LINE 🔥
+// 🔥 PUDHU TRICK: TEXT QR-KU BADHILA IMAGE LINK VARUM 🔥
 client.on('qr', (qr) => {
-    console.log('Indha QR Code-ah scan pannunga Basha:');
-    qrcode.generate(qr, { small: true });
+    console.log('=========================================');
+    console.log('👇👇👇 KEEZHA IRUKKURA LINK-AH CLICK PANNI QR CODE-AH SCAN PANNUNGA 👇👇👇');
+    const qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=400x400&data=' + encodeURIComponent(qr);
+    console.log(qrUrl);
+    console.log('=========================================');
 });
 
 client.on('ready', () => {
@@ -94,6 +97,5 @@ app.post('/api/schedule', upload.single('image'), (req, res) => {
 
 client.initialize();
 
-// 🔥 INDHA PORT FIX THAAN RENDER CLOUD-KU THEVAI 🔥
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`API Server ${PORT}-la run aagudhu! 🚀`));
