@@ -10,7 +10,6 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Image-ah .jpg / .png extension oda save panna
 const storage = multer.diskStorage({
     destination: 'uploads/',
     filename: (req, file, cb) => {
@@ -23,13 +22,12 @@ const upload = multer({ storage: storage });
 let scheduleHistory = [];
 let connectionStatus = 'Disconnected';
 
-// WhatsApp Setup
 const client = new Client({
     authStrategy: new LocalAuth(),
     puppeteer: { headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] }
 });
 
-// 🔥 IDHU THAAN NAMA FIX PANNA MUKKIYAMANA LINE 🔥
+// 🔥 IDHU THAAN NAMMA PUDHU QR CODE LINE 🔥
 client.on('qr', (qr) => {
     console.log('Indha QR Code-ah scan pannunga Basha:');
     qrcode.generate(qr, { small: true });
