@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WA Scheduler Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background-color: #0a0a0a; color: #ededed; }
+        .bg-panel { background-color: #111111; }
+        .wa-text { color: #25D366; }
+        .wa-bg { background-color: #25D366; }
+        .wa-bg:hover { background-color: #1DA851; }
+        .border-custom { border-color: #2a2a2a; }
+        .input-bg { background-color: #1a1a1a; }
+        /* Tab hiding logic */
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        input[type="date"]::-webkit-calendar-picker-indicator, input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
+    </style>
+</head>
+<body class="flex h-screen overflow-hidden font-sans">
+
+    <aside class="w-64 border-r border-custom bg-[#0a0a0a] flex flex-col p-4">
+        <div class="flex items-center gap-3 px-2 py-4 mb-6">
+            <span class="text-3xl wa-text">💬</span>
+            <span class="text-lg font-bold text-white">WA Scheduler <br><span class="text-xs wa-text font-normal">Pro</span></span>
+        </div>
+        <nav class="space-y-2 flex-1">
+            <button onclick="switchTab('dashboard')" id="nav-dashboard" class="w-full flex items-center gap-3 bg-[#1a1a1a] wa-text px-4 py-3 rounded-lg font-medium transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                Dashboard
+            </button>
+            <button onclick="switchTab('history')" id="nav-history" class="w-full flex items-center gap-3 text-gray-400 hover:text-white px-4 py-3 rounded-lg transition-colors">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                History
+            </button>
+        </nav>
+    </aside>
+
+    <main class="flex-1 overflow-y-auto p-10">
+        
+        <div id="dashboard" class="tab-content active space-y-8">
+            <h2 class="text-2xl font-bold flex items-center gap-2">Dashboard</h2>
+            
+            <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+                <div class="xl:col-span-2 bg-panel border border-custom rounded-xl p-8 shadow-xl">
+                    <h3 class="text-lg font-semibold mb-6 flex items-center gap-2 wa-text">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg> Schedule New Message
+                    </h3>
+                    <form id="scheduleForm" class="space-y-6">
+                        <div>
+                            <label class="block text-sm font-semibold mb-2 text-gray-400">👥 WhatsApp Group</label>
+                            <select id="groupId" required class="w-full input-bg border border-custom rounded-lg p-3 text-white focus:outline-none focus:border-[#25D366]"><option value="">Loading groups...</option></select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold mb-2 text-gray-400">📝 Message Content</label>
+                            <textarea id="message" rows="4" required placeholder="Type your message here..." class="w-full input-bg border border-custom rounded-lg p-3 text-white focus:outline-none focus:border-[#25D366]"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-semibold mb-2 text-gray-400">🖼️ Upload Image (Optional)</label>
+                            <input type="file" id="image" accept="image/*" class="w-full input-bg border border-custom rounded-lg p-2 text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:bg-[#1a1a1a] file:text-white file:border file:border-custom hover:file:bg-[#252525] cursor-pointer">
+                        </div>
+                        <div class="grid grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-semibold mb-2 text-gray-400">📅 Schedule Date</label>
+                                <input type="date" id="date" required class="w-full input-bg border border-custom rounded-lg p-3 text-white focus:outline-none focus:border-[#25D366]">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold mb-2 text-gray-400">⏰ Schedule Time</label>
+                                <input type="time" id="time" required class="w-full input-bg border border-custom rounded-lg p-3 text-white focus:outline-none focus:border-[#25D366]">
+                            </div>
+                        </div>
+                        <button type="submit" id="submitBtn" class="w-full wa-bg text-gray-900 font-bold py-4 px-4 rounded-lg mt-8 flex justify-center items-center gap-2 text-lg hover:shadow-lg hover:shadow-[#25D366]/20">
+                            🚀 Schedule Message
+                        </button>
+                    </form>
+                </div>
+
+                <div class="space-y-8">
+                    <div class="bg-panel border border-custom rounded-xl p-6 shadow-xl text-center">
+                        <h3 class="text-sm font-semibold text-gray-400 mb-4 text-left">Connection Status</h3>
+                        <div class="inline-flex items-center justify-center p-4 bg-[#1a1a1a] rounded-full mb-4">
+                            <svg class="w-10 h-10 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                        </div>
+                        <p id="connStatus" class="text-xl font-bold text-green-500">Connected</p>
+                    </div>
+
+                    <div class="bg-panel border border-custom rounded-xl shadow-xl overflow-hidden">
+                        <div class="p-6 border-b border-custom flex justify-between items-center">
+                            <h3 class="font-semibold text-white">Recent Schedules</h3>
+                        </div>
+                        <div class="p-0">
+                            <table class="w-full text-left text-sm">
+                                <thead class="bg-[#1a1a1a] text-gray-400">
+                                    <tr><th class="p-4 font-medium">Group Name</th><th class="p-4 font-medium">Status</th></tr>
+                                </thead>
+                                <tbody id="miniHistoryTable" class="divide-y divide-custom text-gray-300">
+                                    </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="history" class="tab-content space-y-8">
+            <h2 class="text-2xl font-bold flex items-center gap-2">Message History</h2>
+            <div class="bg-panel border border-custom rounded-xl shadow-xl overflow-hidden">
+                <div class="p-6 border-b border-custom">
+                    <h3 class="font-semibold text-white">All Scheduled Messages</h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-[#1a1a1a] text-gray-400">
+                            <tr>
+                                <th class="p-4 font-medium">Group Name</th>
+                                <th class="p-4 font-medium">Message Snippet</th>
+                                <th class="p-4 font-medium">Scheduled Time</th>
+                                <th class="p-4 font-medium">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyTable" class="divide-y divide-custom text-gray-300">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Tab Switcher Logic
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            
+            // Sidebar Styling
+            document.getElementById('nav-dashboard').className = `w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-colors ${tabName === 'dashboard' ? 'bg-[#1a1a1a] wa-text' : 'text-gray-400 hover:text-white'}`;
+            document.getElementById('nav-history').className = `w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-colors ${tabName === 'history' ? 'bg-[#1a1a1a] wa-text' : 'text-gray-400 hover:text-white'}`;
+            
+            if(tabName === 'history' || tabName === 'dashboard') loadHistory();
+        }
+
+        // Fetch Groups
+        fetch('http://localhost:3000/api/groups')
+            .then(res => res.json())
+            .then(groups => {
+                const select = document.getElementById('groupId');
+                select.innerHTML = '<option value="">Select a group...</option>';
+                groups.forEach(g => { select.innerHTML += `<option value="${g.id}">${g.name}</option>`; });
+            });
+
+        // Load History Data
+        function loadHistory() {
+            fetch('http://localhost:3000/api/schedules')
+                .then(res => res.json())
+                .then(schedules => {
+                    let html = '';
+                    let miniHtml = '';
+                    if(schedules.length === 0) {
+                        html = `<tr><td colspan="4" class="p-4 text-center text-gray-500">No schedules found.</td></tr>`;
+                        miniHtml = `<tr><td colspan="2" class="p-4 text-center text-gray-500">No schedules</td></tr>`;
+                    } else {
+                        schedules.reverse().forEach((s, index) => {
+                            let statusBadge = s.status === 'Pending' ? `<span class="bg-yellow-900/50 text-yellow-500 px-2 py-1 rounded text-xs">⏳ Pending</span>` 
+                                : s.status === 'Sent' ? `<span class="bg-green-900/50 text-green-500 px-2 py-1 rounded text-xs">✅ Sent</span>` 
+                                : `<span class="bg-red-900/50 text-red-500 px-2 py-1 rounded text-xs">❌ Failed</span>`;
+                            
+                            html += `<tr class="hover:bg-[#1a1a1a]"><td class="p-4 font-medium text-white">${s.groupName}</td><td class="p-4">${s.message}</td><td class="p-4">${s.time}</td><td class="p-4">${statusBadge}</td></tr>`;
+                            if(index < 5) miniHtml += `<tr class="hover:bg-[#1a1a1a]"><td class="p-4 font-medium text-white">${s.groupName}</td><td class="p-4">${statusBadge}</td></tr>`;
+                        });
+                    }
+                    document.getElementById('historyTable').innerHTML = html;
+                    document.getElementById('miniHistoryTable').innerHTML = miniHtml;
+                });
+        }
+        
+        // Form Submit
+        document.getElementById('scheduleForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            btn.innerHTML = '⏳ Scheduling...';
+            
+            const groupSelect = document.getElementById('groupId');
+            const groupName = groupSelect.options[groupSelect.selectedIndex].text; // Get Group Name for History
+
+            const formData = new FormData();
+            formData.append('groupId', groupSelect.value);
+            formData.append('groupName', groupName);
+            formData.append('message', document.getElementById('message').value);
+            formData.append('date', document.getElementById('date').value);
+            formData.append('time', document.getElementById('time').value);
+            
+            const imageFile = document.getElementById('image').files[0];
+            if(imageFile) formData.append('image', imageFile);
+
+            fetch('http://localhost:3000/api/schedule', { method: 'POST', body: formData })
+            .then(res => res.json())
+            .then(data => {
+                alert('Mass! 🚀 Daily Message Scheduled Successfully!');
+                btn.innerHTML = '🚀 Schedule Message';
+                document.getElementById('scheduleForm').reset();
+                loadHistory(); // Update tables instantly
+            })
+            .catch(err => {
+                alert('Backend is off! Start Node.js.');
+                btn.innerHTML = '🚀 Schedule Message';
+            });
+        });
+
+        // Load history on startup
+        loadHistory();
+    </script>
+</body>
+</html>
