@@ -29,10 +29,8 @@ const client = new Client({
 
 // 🔥 PUDHU QR CODE LINE 🔥
 client.on('qr', (qr) => {
-    console.log('=========================================');
-    console.log('👇👇👇 INDHA QR CODE-AH SCAN PANNUNGA 👇👇👇');
+    console.log('Indha QR Code-ah scan pannunga Basha:');
     qrcode.generate(qr, { small: true });
-    console.log('=========================================');
 });
 
 client.on('ready', () => {
@@ -96,5 +94,6 @@ app.post('/api/schedule', upload.single('image'), (req, res) => {
 
 client.initialize();
 
+// 🔥 INDHA PORT FIX THAAN RENDER CLOUD-KU THEVAI 🔥
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`API Server ${PORT}-la run aagudhu! 🚀`));
