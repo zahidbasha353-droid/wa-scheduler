@@ -27,10 +27,12 @@ const client = new Client({
     puppeteer: { headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] }
 });
 
-// 🔥 IDHU THAAN NAMMA PUDHU QR CODE LINE 🔥
+// 🔥 PUDHU QR CODE LINE 🔥
 client.on('qr', (qr) => {
-    console.log('Indha QR Code-ah scan pannunga Basha:');
+    console.log('=========================================');
+    console.log('👇👇👇 INDHA QR CODE-AH SCAN PANNUNGA 👇👇👇');
     qrcode.generate(qr, { small: true });
+    console.log('=========================================');
 });
 
 client.on('ready', () => {
@@ -93,4 +95,6 @@ app.post('/api/schedule', upload.single('image'), (req, res) => {
 });
 
 client.initialize();
-app.listen(3000, () => console.log('API Server 3000-la run aagudhu! 🚀'));
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`API Server ${PORT}-la run aagudhu! 🚀`));
