@@ -31,7 +31,8 @@ const client = new Client({
 });
 
 client.on('qr', (qr) => {
-    console.log('QR Code generated!');
+    console.log('Indha QR Code-ah scan pannunga Basha:');
+    qrcode.generate(qr, { small: true });
 });
 
 client.on('ready', () => {
@@ -101,4 +102,5 @@ app.post('/api/schedule', upload.single('image'), (req, res) => {
 });
 
 client.initialize();
+
 app.listen(3000, () => console.log('API Server 3000-la run aagudhu! 🚀'));
