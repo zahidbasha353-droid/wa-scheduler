@@ -10,7 +10,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// FIX: Image-ah .jpg / .png extension oda save panna
+// Image-ah .jpg / .png extension oda save panna
 const storage = multer.diskStorage({
     destination: 'uploads/',
     filename: (req, file, cb) => {
@@ -20,7 +20,6 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-// HISTORY: Schedules-ah save panna oru array
 let scheduleHistory = [];
 let connectionStatus = 'Disconnected';
 
@@ -30,6 +29,7 @@ const client = new Client({
     puppeteer: { headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] }
 });
 
+// 🔥 IDHU THAAN NAMA FIX PANNA MUKKIYAMANA LINE 🔥
 client.on('qr', (qr) => {
     console.log('Indha QR Code-ah scan pannunga Basha:');
     qrcode.generate(qr, { small: true });
@@ -40,10 +40,8 @@ client.on('ready', () => {
     console.log('Mass! WhatsApp pakka-va connect aaiduchu.');
 });
 
-// API: Frontend-ku Connection status anuppa
 app.get('/api/status', (req, res) => res.json({ status: connectionStatus }));
 
-// API: Groups fetch panna
 app.get('/api/groups', async (req, res) => {
     try {
         const chats = await client.getChats();
@@ -53,17 +51,14 @@ app.get('/api/groups', async (req, res) => {
     } catch (error) { res.status(500).json({ error: 'Server error' }); }
 });
 
-// API: Schedules History-ah frontend-ku anuppa
 app.get('/api/schedules', (req, res) => {
     res.json(scheduleHistory);
 });
 
-// API: Schedule Message
 app.post('/api/schedule', upload.single('image'), (req, res) => {
     const { groupId, groupName, message, date, time } = req.body; 
     const file = req.file; 
 
-    // History-la save panna pudhu schedule data
     const newSchedule = {
         id: Date.now(),
         groupName: groupName || 'Unknown Group',
@@ -81,13 +76,11 @@ app.post('/api/schedule', upload.single('image'), (req, res) => {
     cron.schedule(cronTime, async () => {
         try {
             if (file) {
-                // Ippo pakka image ah pogum
                 const media = MessageMedia.fromFilePath(file.path);
                 await client.sendMessage(groupId, message, { media: media });
             } else {
                 await client.sendMessage(groupId, message);
             }
-            // Message ponathum status-ah Update pannanum
             const s = scheduleHistory.find(x => x.id === newSchedule.id);
             if(s) s.status = 'Sent';
             console.log('✅ Message Sent!');
@@ -102,5 +95,4 @@ app.post('/api/schedule', upload.single('image'), (req, res) => {
 });
 
 client.initialize();
-
 app.listen(3000, () => console.log('API Server 3000-la run aagudhu! 🚀'));
